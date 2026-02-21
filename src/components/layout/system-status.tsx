@@ -157,11 +157,15 @@ export function SystemStatus() {
             <CardContent className="space-y-2 text-xs">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Model</span>
-                <span className="font-medium">Qwen-Code</span>
+                <span className="font-medium">Qwen3.5 Plus VL</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Mode</span>
-                <span className="font-medium">Chat</span>
+                <span className="text-muted-foreground">Reasoning</span>
+                <span className="font-medium text-green-600 dark:text-green-400">Thinking Enabled</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Vision</span>
+                <span className="font-medium text-green-600 dark:text-green-400">Supported</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Streaming</span>

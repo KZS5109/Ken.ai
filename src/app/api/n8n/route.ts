@@ -6,10 +6,13 @@ const N8N_API_KEY = process.env.N8N_API_KEY;
 export async function GET() {
   try {
     // Try to fetch available workflows from n8n
+    const headers: HeadersInit = {};
+    if (N8N_API_KEY) {
+      headers['X-N8N-API-KEY'] = N8N_API_KEY;
+    }
+    
     const response = await fetch(`${N8N_ENDPOINT}/api/v1/workflows`, {
-      headers: {
-        'X-N8N-API-KEY': N8N_API_KEY,
-      },
+      headers,
     });
 
     if (response.ok) {
@@ -50,12 +53,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Call n8n webhook
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+    if (N8N_API_KEY) {
+      headers['X-N8N-API-KEY'] = N8N_API_KEY;
+    }
+    
     const response = await fetch(`${N8N_ENDPOINT}/webhook/${tool}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-N8N-API-KEY': N8N_API_KEY,
-      },
+      headers,
       body: JSON.stringify(params || {}),
     });
 
