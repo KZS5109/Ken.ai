@@ -1,10 +1,10 @@
 import { NextRequest } from 'next/server';
 import { streamText } from 'ai';
-import { createOpenRouter } from '@openrouter/ai-sdk-provider';
+import { createGroq } from '@ai-sdk/groq';
 import { z } from 'zod';
 
-const openrouter = createOpenRouter({
-  apiKey: process.env.OPENROUTER_API_KEY,
+const groq = createGroq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 const N8N_ENDPOINT = process.env.N8N_ENDPOINT || 'https://kzs5109-n8n.hf.space';
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: 'Message or images required' }, { status: 400 });
     }
 
-    // Build message content for Qwen3.5 Plus VL (supports text + images)
+    // Build message content for Llama 4 Scout (supports text + images)
     let content: any = [];
     
     if (message) {
@@ -84,15 +84,15 @@ export async function POST(request: NextRequest) {
       : undefined;
 
     const result = streamText({
-      model: openrouter('qwen/qwen3.5-plus-02-15'),
+      model: groq('meta-llama/llama-4-scout-17b-16e-instruct'),
       messages: [
         {
           role: 'system',
-          content: `You are Gwen, an advanced AI assistant powered by Qwen3.5 Plus via OpenRouter.
+          content: `You are Gwen, an advanced AI assistant powered by Llama 4 Scout via Groq.
 
 Capabilities:
-- Native vision-language understanding (images, diagrams, screenshots, documents)
-- Advanced reasoning with thinking mode for complex problems
+- Native vision-language understanding (images, diagrams, screenshots, documents, OCR)
+- Ultra-fast inference on Groq Cloud
 - Help with development tasks, debugging, and architecture
 - Execute n8n workflows when Tool Mode is enabled
 
@@ -118,11 +118,6 @@ When Tool Mode is active:
       temperature: 0.7,
       topP: 0.9,
       maxOutputTokens: 4096,
-      providerOptions: {
-        openrouter: {
-          include_reasoning: true,
-        },
-      },
     });
 
     return result.toTextStreamResponse({
