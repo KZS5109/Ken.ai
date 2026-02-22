@@ -7,8 +7,8 @@ import rehypeHighlight from 'rehype-highlight';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Send, Bot, User, Wrench, Loader2, XCircle, Paperclip, File, X, 
-  ChevronDown, ChevronUp, BrainCircuit, PanelLeftClose, PanelLeftOpen,
-  Copy, Check, Sparkles
+  ChevronDown, ChevronUp, PanelLeftClose, PanelLeftOpen,
+  Copy, Check, Sparkles, Globe, Search
 } from 'lucide-react';
 import { useChatStore, Attachment } from '@/stores/chat-store';
 import { useSettingsStore } from '@/stores/settings-store';
@@ -24,7 +24,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   attachments?: Attachment[];
-  files?: PreviewFile[];
+  toolInvocations?: any[];
 }
 
 function CopyButton({ code }: { code: string }) {
@@ -45,6 +45,68 @@ function CopyButton({ code }: { code: string }) {
     >
       {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
     </Button>
+  );
+}
+
+function ToolCallDisplay({ toolCall }: { toolCall: any }) {
+  const [isExpanded, setIsExpanded] = useState(true);
+  
+  if (!toolCall || !toolCall.toolName) return null;
+
+  const isSearch = toolCall.toolName === 'web_search';
+  const isN8N = toolCall.toolName === 'execute_n8n_workflow';
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0 }}
+      className="mb-3 rounded-xl overflow-hidden border border-border/50 bg-muted/40"
+    >
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full flex items-center gap-2 px-3 py-2 bg-muted/60 hover:bg-muted/80 transition-colors"
+      >
+        {isSearch ? (
+          <Globe size={14} className="text-blue-500" />
+        ) : isN8N ? (
+          <Wrench size={14} className="text-orange-500" />
+        ) : (
+          <Search size={14} className="text-muted-foreground" />
+        )}
+        <span className="text-xs font-medium">
+          {isSearch ? 'Searching the web...' : isN8N ? `Running ${toolCall.args?.workflow_name || 'workflow'}...` : toolCall.toolName}
+        </span>
+        <ChevronDown size={14} className={cn("ml-auto transition-transform", isExpanded ? "" : "-rotate-90")} />
+      </button>
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="px-3 py-2 text-xs text-muted-foreground border-t border-border/50"
+          >
+            {toolCall.args?.query && (
+              <p className="font-mono bg-muted/60 p-2 rounded">Query: {toolCall.args.query}</p>
+            )}
+            {toolCall.args?.workflow_name && (
+              <p className="font-mono bg-muted/60 p-2 rounded">Workflow: {toolCall.args.workflow_name}</p>
+            )}
+            {toolCall.result && (
+              <div className="mt-2">
+                <p className="font-semibold mb-1">Result:</p>
+                <pre className="bg-muted/60 p-2 rounded overflow-x-auto max-h-32">
+                  {typeof toolCall.result === 'object' 
+                    ? JSON.stringify(toolCall.result, null, 2) 
+                    : toolCall.result}
+                </pre>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 
@@ -82,47 +144,57 @@ function ChatMessageItem({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
       className={cn(
-        "flex gap-3 p-4",
+        "flex gap-2.5 p-4",
         isUser ? "justify-end" : "justify-start"
       )}
     >
       {/* AI Avatar */}
       {!isUser && (
         <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/90 to-primary shadow-md"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.1, type: "spring", stiffness: 300 }}
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/90 to-primary shadow-md mt-0.5"
         >
-          <Bot size={16} className="text-primary-foreground" />
+          <Bot size={15} className="text-primary-foreground" />
         </motion.div>
       )}
 
       {/* Message Bubble */}
       <div className={cn(
-        "flex flex-col max-w-[85%] md:max-w-[75%]",
-        isUser ? "items-end" : "items-start"
+        "flex flex-col",
+        isUser ? "items-end ml-auto" : "items-start mr-auto",
+        isUser ? "max-w-[75%]" : "max-w-[85%]"
       )}>
         <motion.div
           layout
           className={cn(
-            "rounded-2xl px-4 py-3 shadow-sm",
+            "rounded-2xl px-4 py-2.5 shadow-sm",
             isUser 
-              ? "bg-gradient-to-br from-primary to-primary/90 text-primary-foreground rounded-br-md" 
-              : "bg-muted/60 backdrop-blur-sm rounded-bl-md border border-border/50"
+              ? "bg-gradient-to-br from-blue-600 to-blue-600/90 text-white rounded-tr-none" 
+              : "bg-secondary/50 backdrop-blur-md rounded-bl-none border border-border/50"
           )}
         >
+          {/* Tool calls display */}
+          {message.toolInvocations && message.toolInvocations.length > 0 && (
+            <div className="mb-2 space-y-2">
+              {message.toolInvocations.map((toolCall, idx) => (
+                <ToolCallDisplay key={idx} toolCall={toolCall} />
+              ))}
+            </div>
+          )}
+
           {/* Attachments display */}
           {message.attachments && message.attachments.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-3">
+            <div className="flex flex-wrap gap-2 mb-2.5">
               {message.attachments.map((attachment, idx) => (
                 <motion.div
                   key={idx}
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: idx * 0.1 }}
+                  transition={{ delay: idx * 0.08 }}
                   onClick={() => onFileClick({
                     id: attachment.id,
                     name: attachment.file.name,
@@ -136,11 +208,11 @@ function ChatMessageItem({
                     <img
                       src={attachment.preview}
                       alt={attachment.file.name}
-                      className="h-24 w-24 object-cover"
+                      className="h-20 w-20 object-cover"
                     />
                   ) : (
-                    <div className="h-24 w-24 flex items-center justify-center bg-muted/80 backdrop-blur">
-                      <File size={28} className="text-muted-foreground" />
+                    <div className="h-20 w-20 flex items-center justify-center bg-muted/80 backdrop-blur">
+                      <File size={24} className="text-muted-foreground" />
                     </div>
                   )}
                   <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 truncate">
@@ -164,7 +236,7 @@ function ChatMessageItem({
                   code({ node, inline, className, children, ...props }: any) {
                     const codeContent = String(children).replace(/\n$/, '');
                     return !inline ? (
-                      <div className="relative group">
+                      <div className="relative group -mx-2 my-2">
                         <pre className="bg-muted/80 p-3 rounded-lg overflow-x-auto text-xs font-mono border border-border/50">
                           <code className={className} {...props}>
                             {children}
@@ -173,7 +245,7 @@ function ChatMessageItem({
                         <CopyButton code={codeContent} />
                       </div>
                     ) : (
-                      <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono border border-border/30" {...props}>
+                      <code className="bg-muted/60 px-1.5 py-0.5 rounded text-xs font-mono border border-border/30" {...props}>
                         {children}
                       </code>
                     );
@@ -189,42 +261,42 @@ function ChatMessageItem({
         {/* Code blocks preview */}
         {codeBlocks.length > 0 && !isUser && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mt-2 flex flex-wrap gap-2"
+            transition={{ delay: 0.15 }}
+            className="mt-2 flex flex-wrap gap-1.5"
           >
             {codeBlocks.map((file, idx) => (
               <motion.div
                 key={file.id}
-                initial={{ scale: 0.8, opacity: 0 }}
+                initial={{ scale: 0.85, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.3 + idx * 0.05 }}
+                transition={{ delay: 0.2 + idx * 0.04 }}
                 onClick={() => onFileClick(file)}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-muted/60 hover:bg-primary/10 border border-border/50 cursor-pointer transition-all hover:scale-105"
+                className="flex items-center gap-1 px-2 py-1 rounded-lg bg-secondary/60 hover:bg-primary/10 border border-border/50 cursor-pointer transition-all hover:scale-105"
               >
-                <File size={12} className="text-primary" />
-                <span className="text-xs font-medium">{file.name}</span>
+                <File size={11} className="text-primary" />
+                <span className="text-[10px] font-medium">{file.name}</span>
               </motion.div>
             ))}
           </motion.div>
         )}
 
         {/* Timestamp */}
-        <span className="text-[10px] text-muted-foreground mt-1.5 px-1">
-          {new Date(message.id).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        <span className="text-[10px] text-muted-foreground/70 mt-1 px-1">
+          {new Date(parseInt(message.id)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </span>
       </div>
 
       {/* User Avatar */}
       {isUser && (
         <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-muted to-muted/80 shadow-md"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.1, type: "spring", stiffness: 300 }}
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-muted to-muted/80 shadow-md mt-0.5"
         >
-          <User size={16} className="text-muted-foreground" />
+          <User size={15} className="text-muted-foreground" />
         </motion.div>
       )}
     </motion.div>
@@ -266,7 +338,6 @@ export function ChatInterface() {
         };
         addAttachment(attachment);
         
-        // Also add to preview files
         const previewFile: PreviewFile = {
           id: attachment.id,
           name: file.name,
@@ -335,11 +406,11 @@ export function ChatInterface() {
 
       const assistantMessageId = (Date.now() + 1).toString();
       let assistantContent = '';
+      let toolInvocations: any[] = [];
 
-      // Add placeholder assistant message
       setMessages((prev) => [
         ...prev,
-        { id: assistantMessageId, role: 'assistant', content: '' },
+        { id: assistantMessageId, role: 'assistant', content: '', toolInvocations: [] },
       ]);
 
       while (true) {
@@ -349,11 +420,27 @@ export function ChatInterface() {
         const chunk = new TextDecoder().decode(value);
         assistantContent += chunk;
 
-        // Update assistant message with streaming content
+        // Parse tool calls from the stream
+        const toolCallMatch = assistantContent.match(/\[TOOL:(\w+)\]([\s\S]*?)\[\/TOOL\]/);
+        if (toolCallMatch) {
+          const [_, toolName, toolData] = toolCallMatch;
+          try {
+            const parsed = JSON.parse(toolData);
+            toolInvocations.push({
+              toolName,
+              args: parsed.args,
+              result: parsed.result,
+              state: 'result',
+            });
+          } catch (e) {
+            // Ignore parse errors
+          }
+        }
+
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantMessageId 
-              ? { ...m, content: assistantContent.trim() }
+              ? { ...m, content: assistantContent.trim(), toolInvocations: [...toolInvocations] }
               : m
           )
         );
@@ -394,7 +481,7 @@ export function ChatInterface() {
                   <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Gwen</h1>
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
                     <Sparkles size={10} className="text-primary" />
-                    Powered by Llama 4 Scout
+                    Llama 4 Scout + Web Search
                   </p>
                 </div>
               </div>
@@ -460,9 +547,9 @@ export function ChatInterface() {
                         <div>
                           <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Welcome to Gwen</h2>
                           <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
-                            Your AI-powered developer cockpit with Llama 4 Scout on Groq Cloud. 
+                            Ultra-fast AI with web search and vision support.
                             <br />
-                            Ultra-fast responses with vision support.
+                            Ask about current events or upload images to analyze.
                           </p>
                         </div>
                         <motion.div
@@ -474,10 +561,11 @@ export function ChatInterface() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setInput("What can you do?")}
+                            onClick={() => setInput("What's the latest AI news?")}
                             className="rounded-full"
                           >
-                            What can you do?
+                            <Globe size={14} className="mr-1" />
+                            Latest AI news
                           </Button>
                           <Button
                             variant="outline"
@@ -492,7 +580,7 @@ export function ChatInterface() {
                     </motion.div>
                   ) : (
                     <>
-                      {messages.map((message, index) => (
+                      {messages.map((message) => (
                         <ChatMessageItem
                           key={message.id}
                           message={message}
@@ -503,24 +591,24 @@ export function ChatInterface() {
                         <motion.div
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="flex gap-3 p-4"
+                          className="flex gap-2.5 p-4"
                         >
                           <motion.div
                             animate={{
-                              scale: [1, 1.1, 1],
-                              rotate: [0, 5, -5, 0],
+                              scale: [1, 1.08, 1],
+                              rotate: [0, 4, -4, 0],
                             }}
                             transition={{
                               duration: 1.5,
                               repeat: Infinity,
                               ease: "easeInOut",
                             }}
-                            className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary/90 to-primary shadow-md"
+                            className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary/90 to-primary shadow-md mt-0.5"
                           >
-                            <Bot size={16} className="text-primary-foreground" />
+                            <Bot size={15} className="text-primary-foreground" />
                           </motion.div>
                           <div className="flex items-center gap-2">
-                            <Loader2 size={16} className="animate-spin text-muted-foreground" />
+                            <Loader2 size={15} className="animate-spin text-muted-foreground" />
                             <span className="text-muted-foreground text-sm">Gwen is thinking...</span>
                           </div>
                         </motion.div>
@@ -616,7 +704,7 @@ export function ChatInterface() {
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder={toolMode ? "Ask anything or trigger an n8n workflow..." : "Message Gwen..."}
+                        placeholder={toolMode ? "Ask anything or trigger n8n..." : "Message Gwen..."}
                         className="flex-1 px-3 py-2.5 bg-transparent focus:outline-none text-sm min-h-[40px] placeholder:text-muted-foreground/60"
                         disabled={isLoading}
                       />
@@ -641,7 +729,7 @@ export function ChatInterface() {
                   </div>
                 </form>
                 <p className="text-[10px] text-muted-foreground/70 text-center mt-2.5">
-                  Powered by <span className="font-medium">Llama 4 Scout</span> via Groq Cloud · Ultra-fast inference with vision support
+                  Powered by <span className="font-medium">Llama 4 Scout</span> via Groq Cloud · Web search enabled
                 </p>
               </div>
             </footer>
