@@ -1,0 +1,10 @@
+{
+  "build": {
+    "env": {
+      "TURBOPACK": "0"
+    }
+  },
+  "env": {
+    "TURBOPACK": "0"
+  }
+}
