@@ -4,13 +4,9 @@ const nextConfig: NextConfig = {
   // Disable Turbopack - use Webpack for production builds
   // Turbopack can hang during "Creating an optimized production build"
   // Note: Vercel may still force Turbopack, so set TURBOPACK=0 in Vercel env vars
-  experimental: {
-    // Disable React Compiler which can conflict with Turbopack
-    reactCompiler: false,
-  },
 
-  // Use SWC for minification (faster and more reliable than Terser)
-  swcMinify: true,
+  // Disable React Compiler which can conflict with Turbopack
+  reactCompiler: false,
 
   // Optimize bundle analysis
   productionBrowserSourceMaps: false,
