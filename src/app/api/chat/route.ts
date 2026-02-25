@@ -24,21 +24,33 @@ export async function POST(request: NextRequest) {
       payload.toolMode = true;
     }
 
-    // Call n8n webhook
+    console.log('[v0] Calling n8n webhook:', N8N_WEBHOOK_URL);
+    console.log('[v0] Payload:', payload);
+
+    // Call n8n webhook with timeout
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000);
+
     const response = await fetch(N8N_WEBHOOK_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
+      signal: controller.signal,
     });
 
+    clearTimeout(timeout);
+
     if (!response.ok) {
-      throw new Error(`n8n webhook error: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('[v0] n8n webhook error response:', errorText);
+      throw new Error(`n8n webhook error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     // Get the response from n8n
     const result = await response.json();
+    console.log('[v0] n8n response:', result);
     
     // Return as a stream to maintain compatibility with the frontend
     const encoder = new TextEncoder();
@@ -58,9 +70,11 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Chat API error:', error);
+    console.error('[v0] Chat API error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
+    console.error('[v0] Error message:', errorMessage);
     return Response.json(
-      { error: error instanceof Error ? error.message : 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

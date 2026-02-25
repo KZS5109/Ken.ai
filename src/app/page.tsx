@@ -143,10 +143,40 @@ interface PreviewPanelProps {
   previewItems: PreviewItem[];
   onRemove: (id: string) => void;
   onClear: () => void;
+  panelWidth: number;
+  onPanelWidthChange: (width: number) => void;
 }
 
-function PreviewPanel({ isOpen, onClose, previewItems, onRemove, onClear }: PreviewPanelProps) {
+function PreviewPanel({ isOpen, onClose, previewItems, onRemove, onClear, panelWidth, onPanelWidthChange }: PreviewPanelProps) {
   const [activeTab, setActiveTab] = useState<'all' | 'image' | 'code' | 'pdf' | 'file'>('all');
+  const [isResizing, setIsResizing] = useState(false);
+
+  const handleMouseDown = () => {
+    setIsResizing(true);
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return;
+      
+      const newWidth = Math.max(200, Math.min(600, window.innerWidth - e.clientX));
+      onPanelWidthChange(newWidth);
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    if (isResizing) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing, onPanelWidthChange]);
 
   const filteredItems = activeTab === 'all'
     ? previewItems
@@ -257,18 +287,20 @@ function PreviewPanel({ isOpen, onClose, previewItems, onRemove, onClear }: Prev
   };
 
   return (
-    <motion.aside
-      initial={false}
-      animate={{
-        width: isOpen ? 320 : 0,
-        opacity: isOpen ? 1 : 0
-      }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className={cn(
-        "flex flex-col border-l bg-sidebar-bg overflow-hidden",
-        isOpen ? "w-[320px]" : "w-0"
-      )}
-    >
+    <div className="relative">
+      <motion.aside
+        initial={false}
+        animate={{
+          width: isOpen ? panelWidth : 0,
+          opacity: isOpen ? 1 : 0
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className={cn(
+          "flex flex-col border-l bg-sidebar-bg overflow-hidden",
+          isOpen ? `w-[${panelWidth}px]` : "w-0"
+        )}
+        style={{ width: isOpen ? `${panelWidth}px` : 0 }}
+      >
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border shrink-0">
         <div className="flex items-center gap-2">
@@ -360,12 +392,25 @@ function PreviewPanel({ isOpen, onClose, previewItems, onRemove, onClear }: Prev
         </div>
       </div>
     </motion.aside>
+      {/* Resize Handle */}
+      {isOpen && (
+        <div
+          onMouseDown={handleMouseDown}
+          className={cn(
+            "absolute top-0 left-0 w-1 h-full bg-transparent hover:bg-primary/50 cursor-col-resize transition-colors",
+            isResizing && "bg-primary"
+          )}
+          title="Drag to resize"
+        />
+      )}
+    </div>
   );
 }
 
 export default function Home() {
   const [input, setInput] = useState('');
   const [showSidebar, setShowSidebar] = useState(true);
+  const [panelWidth, setPanelWidth] = useState(320);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { theme, showPreviewPanel, previewItems, togglePreviewPanel, addPreviewItem, removePreviewItem, clearPreviewItems } = useSettingsStore();
@@ -768,6 +813,8 @@ export default function Home() {
         previewItems={previewItems}
         onRemove={removePreviewItem}
         onClear={clearPreviewItems}
+        panelWidth={panelWidth}
+        onPanelWidthChange={setPanelWidth}
       />
     </div>
   );
