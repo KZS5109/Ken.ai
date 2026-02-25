@@ -10,80 +10,152 @@ export interface Attachment {
 
 export interface Message {
   id: string;
-  role: 'user' | 'assistant' | 'tool';
+  role: 'user' | 'assistant';
   content: string;
   timestamp: number;
   attachments?: Attachment[];
-  toolCall?: {
-    name: string;
-    status: 'pending' | 'success' | 'error';
-    result?: any;
-  };
 }
 
-export interface ToolSchema {
-  name: string;
-  description: string;
-  endpoint: string;
-  active: boolean;
+export interface Conversation {
+  id: string;
+  title: string;
+  messages: Message[];
+  createdAt: number;
+  updatedAt: number;
 }
 
 interface ChatState {
-  messages: Message[];
+  conversations: Conversation[];
+  currentConversationId: string | null;
   isLoading: boolean;
-  error: string | null;
-  toolMode: boolean;
-  availableTools: ToolSchema[];
-  n8nConnected: boolean;
   attachments: Attachment[];
+  addConversation: () => string;
+  switchConversation: (id: string) => void;
+  deleteConversation: (id: string) => void;
   addMessage: (message: Message) => void;
   updateMessage: (id: string, content: string) => void;
-  clearMessages: () => void;
   setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-  toggleToolMode: () => void;
-  setAvailableTools: (tools: ToolSchema[]) => void;
-  setN8NConnected: (connected: boolean) => void;
   addAttachment: (attachment: Attachment) => void;
   removeAttachment: (id: string) => void;
   clearAttachments: () => void;
+  getCurrentConversation: () => Conversation | null;
 }
 
 export const useChatStore = create<ChatState>()(
   persist(
-    (set) => ({
-      messages: [],
+    (set, get) => ({
+      conversations: [],
+      currentConversationId: null,
       isLoading: false,
-      error: null,
-      toolMode: false,
-      availableTools: [],
-      n8nConnected: false,
       attachments: [],
-      addMessage: (message) =>
-        set((state) => ({ messages: [...state.messages, message] })),
-      updateMessage: (id, content) =>
+      
+      addConversation: () => {
+        const id = `conv-${Date.now()}`;
+        const newConversation: Conversation = {
+          id,
+          title: 'New Chat',
+          messages: [],
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        };
         set((state) => ({
-          messages: state.messages.map((m) =>
-            m.id === id ? { ...m, content } : m
-          ),
-        })),
-      clearMessages: () => set({ messages: [] }),
+          conversations: [newConversation, ...state.conversations],
+          currentConversationId: id,
+        }));
+        return id;
+      },
+      
+      switchConversation: (id) => {
+        set({ currentConversationId: id });
+      },
+      
+      deleteConversation: (id) => {
+        set((state) => {
+          const newConversations = state.conversations.filter((c) => c.id !== id);
+          return {
+            conversations: newConversations,
+            currentConversationId: state.currentConversationId === id 
+              ? (newConversations[0]?.id || null) 
+              : state.currentConversationId,
+          };
+        });
+      },
+      
+      addMessage: (message) => {
+        set((state) => {
+          if (!state.currentConversationId) {
+            // Auto-create conversation if none exists
+            const convId = `conv-${Date.now()}`;
+            const title = message.role === 'user' 
+              ? message.content.slice(0, 50) + (message.content.length > 50 ? '...' : '')
+              : 'New Chat';
+            const newConversation: Conversation = {
+              id: convId,
+              title,
+              messages: [message],
+              createdAt: Date.now(),
+              updatedAt: Date.now(),
+            };
+            return {
+              conversations: [newConversation, ...state.conversations],
+              currentConversationId: convId,
+            };
+          }
+          
+          return {
+            conversations: state.conversations.map((conv) =>
+              conv.id === state.currentConversationId
+                ? { 
+                    ...conv, 
+                    messages: [...conv.messages, message],
+                    updatedAt: Date.now(),
+                    title: conv.messages.length === 0 && message.role === 'user'
+                      ? message.content.slice(0, 50) + (message.content.length > 50 ? '...' : '')
+                      : conv.title,
+                  }
+                : conv
+            ),
+          };
+        });
+      },
+      
+      updateMessage: (id, content) => {
+        set((state) => {
+          if (!state.currentConversationId) return state;
+          return {
+            conversations: state.conversations.map((conv) =>
+              conv.id === state.currentConversationId
+                ? { 
+                    ...conv, 
+                    messages: conv.messages.map((m) =>
+                      m.id === id ? { ...m, content } : m
+                    ),
+                  }
+                : conv
+            ),
+          };
+        });
+      },
+      
       setLoading: (isLoading) => set({ isLoading }),
-      setError: (error) => set({ error }),
-      toggleToolMode: () => set((state) => ({ toolMode: !state.toolMode })),
-      setAvailableTools: (tools) => set({ availableTools: tools }),
-      setN8NConnected: (connected) => set({ n8nConnected: connected }),
+      
       addAttachment: (attachment) =>
         set((state) => ({ attachments: [...state.attachments, attachment] })),
+      
       removeAttachment: (id) =>
         set((state) => ({
           attachments: state.attachments.filter((a) => a.id !== id),
         })),
+      
       clearAttachments: () => set({ attachments: [] }),
+      
+      getCurrentConversation: () => {
+        const state = get();
+        return state.conversations.find((c) => c.id === state.currentConversationId) || null;
+      },
     }),
     {
       name: 'gwen-chat',
-      partialize: (state) => ({ toolMode: state.toolMode }),
     }
   )
 );

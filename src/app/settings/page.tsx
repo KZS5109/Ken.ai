@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useSettingsStore } from '@/stores/settings-store';
-import { ArrowLeft, Save, Moon, Sun } from 'lucide-react';
+import { ArrowLeft, Moon, Sun } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,18 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
 export default function SettingsPage() {
-  const { n8nEndpoint, n8nApiKey, theme, setN8NEndpoint, setN8NApiKey, toggleTheme } =
-    useSettingsStore();
-  const [localEndpoint, setLocalEndpoint] = React.useState(n8nEndpoint);
-  const [localApiKey, setLocalApiKey] = React.useState(n8nApiKey);
-  const [saved, setSaved] = React.useState(false);
-
-  const handleSave = () => {
-    setN8NEndpoint(localEndpoint);
-    setN8NApiKey(localApiKey);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
+  const { theme, toggleTheme } = useSettingsStore();
 
   return (
     <div className={cn("flex h-screen overflow-hidden", theme)}>
@@ -93,54 +82,6 @@ export default function SettingsPage() {
               </CardContent>
             </Card>
 
-            {/* n8n Configuration */}
-            <Card>
-              <CardHeader>
-                <CardTitle>n8n Integration</CardTitle>
-                <CardDescription>
-                  Configure your n8n instance for workflow automation
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">n8n Endpoint</label>
-                  <input
-                    type="url"
-                    value={localEndpoint}
-                    onChange={(e) => setLocalEndpoint(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="https://your-n8n-instance.com"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">n8n API Key</label>
-                  <input
-                    type="password"
-                    value={localApiKey}
-                    onChange={(e) => setLocalApiKey(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Your n8n API key"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    The API key is stored locally in your browser and never sent to our servers.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-4 pt-4">
-                  <Button onClick={handleSave} className="gap-2">
-                    <Save size={16} />
-                    Save Settings
-                  </Button>
-                  {saved && (
-                    <span className="text-sm text-green-600 dark:text-green-400">
-                      Settings saved!
-                    </span>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Info */}
             <Card>
               <CardHeader>
@@ -148,9 +89,8 @@ export default function SettingsPage() {
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
                 <p className="text-muted-foreground">
-                  Gwen is a browser-based AI chatbox that connects to Qwen AI models
-                  and n8n workflows. It's designed to be deployed on Vercel as a
-                  serverless application.
+                  Gwen is a browser-based AI chatbot that connects to n8n workflows.
+                  It's designed to be deployed on Vercel as a serverless application.
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 bg-muted rounded-lg">
@@ -162,14 +102,29 @@ export default function SettingsPage() {
                     <p className="text-muted-foreground">shadcn/ui + Tailwind</p>
                   </div>
                   <div className="p-3 bg-muted rounded-lg">
-                    <p className="font-medium">AI Model</p>
-                    <p className="text-muted-foreground">Qwen-Code</p>
+                    <p className="font-medium">AI Integration</p>
+                    <p className="text-muted-foreground">n8n webhook</p>
                   </div>
                   <div className="p-3 bg-muted rounded-lg">
-                    <p className="font-medium">Integration</p>
-                    <p className="text-muted-foreground">n8n workflows</p>
+                    <p className="font-medium">Deployment</p>
+                    <p className="text-muted-foreground">Vercel / Node.js</p>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Environment Info */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Configuration</CardTitle>
+                <CardDescription>
+                  Environment variables
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  The n8n webhook URL is configured via the <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">N8N_WEBHOOK_URL</code> environment variable.
+                </p>
               </CardContent>
             </Card>
           </div>

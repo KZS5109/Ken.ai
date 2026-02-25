@@ -3,8 +3,8 @@ import './globals.css';
 import { ThemeProvider } from '@/components/layout/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'Gwen - Developer Cockpit',
-  description: 'AI-powered developer cockpit with Qwen and n8n integration',
+  title: 'Gwen - AI Assistant',
+  description: 'AI-powered chat assistant with n8n integration',
 };
 
 export default function RootLayout({

@@ -1,48 +1,60 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #0a0a0a;
+  /* Light mode - Claude style */
+  --background: #fcfbf9;
+  --foreground: #292929;
   --card: #ffffff;
-  --card-foreground: #0a0a0a;
+  --card-foreground: #292929;
   --popover: #ffffff;
-  --popover-foreground: #0a0a0a;
-  --primary: #18181b;
-  --primary-foreground: #fafafa;
-  --secondary: #f4f4f5;
-  --secondary-foreground: #18181b;
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  --accent: #f4f4f5;
-  --accent-foreground: #18181b;
-  --destructive: #ef4444;
-  --destructive-foreground: #fafafa;
-  --border: #e4e4e7;
-  --input: #e4e4e7;
-  --ring: #18181b;
-  --radius: 0.5rem;
+  --popover-foreground: #292929;
+  --primary: #292929;
+  --primary-foreground: #ffffff;
+  --secondary: #f2f0eb;
+  --secondary-foreground: #292929;
+  --muted: #f2f0eb;
+  --muted-foreground: #8e8e8e;
+  --accent: #f2f0eb;
+  --accent-foreground: #292929;
+  --destructive: #d93025;
+  --destructive-foreground: #ffffff;
+  --border: #e8e6e1;
+  --input: #e8e6e1;
+  --ring: #292929;
+  --radius: 0.75rem;
+  
+  /* Sidebar */
+  --sidebar-bg: #f7f6f3;
+  --sidebar-hover: #ebe9e4;
+  --sidebar-active: #e3e1dc;
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #fafafa;
-  --card: #0a0a0a;
-  --card-foreground: #fafafa;
-  --popover: #0a0a0a;
-  --popover-foreground: #fafafa;
-  --primary: #fafafa;
-  --primary-foreground: #18181b;
-  --secondary: #27272a;
-  --secondary-foreground: #fafafa;
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
-  --accent: #27272a;
-  --accent-foreground: #fafafa;
-  --destructive: #7f1d1d;
-  --destructive-foreground: #fafafa;
-  --border: #27272a;
-  --input: #27272a;
-  --ring: #d4d4d8;
+  /* Dark mode - Claude Desktop signature charcoal palette */
+  --background: #1a1a1a;
+  --foreground: #f0f0f0;
+  --card: #242424;
+  --card-foreground: #f0f0f0;
+  --popover: #242424;
+  --popover-foreground: #f0f0f0;
+  --primary: #f0f0f0;
+  --primary-foreground: #1a1a1a;
+  --secondary: #2d2d2d;
+  --secondary-foreground: #f0f0f0;
+  --muted: #2d2d2d;
+  --muted-foreground: #9b9b9b;
+  --accent: #2d2d2d;
+  --accent-foreground: #f0f0f0;
+  --destructive: #b93a3a;
+  --destructive-foreground: #ffffff;
+  --border: #333333;
+  --input: #333333;
+  --ring: #4a4a4a;
+  
+  /* Sidebar - layered charcoal */
+  --sidebar-bg: #1f1f1f;
+  --sidebar-hover: #2a2a2a;
+  --sidebar-active: #333333;
 }
 
 @theme inline {
@@ -65,6 +77,9 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-sidebar-hover: var(--sidebar-hover);
+  --color-sidebar-active: var(--sidebar-active);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -75,6 +90,27 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Claude-style scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
 }
 
 /* Markdown Styles */
@@ -87,6 +123,7 @@ body {
   border-radius: 0.5rem;
   padding: 1rem;
   overflow-x: auto;
+  border: 1px solid var(--border);
 }
 
 .prose code {
@@ -101,9 +138,42 @@ body {
   padding: 0;
 }
 
+.prose p {
+  margin: 0.75em 0;
+  line-height: 1.6;
+}
+
+.prose ul, .prose ol {
+  padding-left: 1.5em;
+  margin: 0.75em 0;
+}
+
 .prose img {
   border-radius: 0.5rem;
+  margin: 1em 0;
 }
 
 /* Highlight.js styles */
 @import 'highlight.js/styles/github-dark.css';
+
+/* Claude-style message animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-animation {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Input focus styles */
+input:focus, textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ring);
+}
