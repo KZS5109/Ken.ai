@@ -3,7 +3,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/layout/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'Gwen - AI Assistant',
+  title: 'Ken.ai - AI Assistant',
   description: 'AI-powered chat assistant with n8n integration',
 };
 

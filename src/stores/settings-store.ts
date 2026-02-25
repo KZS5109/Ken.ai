@@ -41,7 +41,7 @@ export const useSettingsStore = create<SettingsState>()(
       clearPreviewItems: () => set({ previewItems: [] }),
     }),
     {
-      name: 'gwen-settings',
+      name: 'ken-ai-settings',
     }
   )
 );

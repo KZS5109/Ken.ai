@@ -35,7 +35,7 @@ export default function SettingsPage() {
               <div>
                 <h1 className="text-3xl font-bold">Settings</h1>
                 <p className="text-muted-foreground mt-1">
-                  Configure your Gwen instance
+                  Configure your Ken.ai instance
                 </p>
               </div>
               <Button
@@ -52,7 +52,7 @@ export default function SettingsPage() {
               <CardHeader>
                 <CardTitle>Appearance</CardTitle>
                 <CardDescription>
-                  Customize how Gwen looks on your device
+                  Customize how Ken.ai looks on your device
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -85,11 +85,11 @@ export default function SettingsPage() {
             {/* Info */}
             <Card>
               <CardHeader>
-                <CardTitle>About Gwen</CardTitle>
+                <CardTitle>About Ken.ai</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
                 <p className="text-muted-foreground">
-                  Gwen is a browser-based AI chatbot that connects to n8n workflows.
+                  Ken.ai is a browser-based AI chatbot that connects to n8n workflows.
                   It's designed to be deployed on Vercel as a serverless application.
                 </p>
                 <div className="grid grid-cols-2 gap-4">

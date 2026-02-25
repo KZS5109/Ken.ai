@@ -66,7 +66,7 @@ function ChatMessageItem({ message, onAttachmentClick }: { message: Message; onA
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <span className="font-semibold text-sm">
-            {isUser ? 'You' : 'Gwen'}
+            {isUser ? 'You' : 'Ken.ai'}
           </span>
           <span className="text-xs text-muted-foreground">
             {new Date(message.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -605,7 +605,7 @@ export default function Home() {
               {showSidebar ? <X size={18} /> : <Menu size={18} />}
             </Button>
             <div>
-              <h1 className="font-semibold text-lg">Gwen</h1>
+              <h1 className="font-semibold text-lg">Ken.ai</h1>
               <p className="text-xs text-muted-foreground">AI Assistant</p>
             </div>
           </div>
@@ -668,7 +668,7 @@ export default function Home() {
                         <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:-0.15s]"></span>
                         <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></span>
                       </div>
-                      <span className="text-muted-foreground text-sm">Gwen is thinking...</span>
+                      <span className="text-muted-foreground text-sm">Ken.ai is thinking...</span>
                     </div>
                   </motion.div>
                 )}
@@ -735,7 +735,7 @@ export default function Home() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Message Gwen..."
+                placeholder="Message Ken.ai..."
                 className="flex-1 px-2 py-2.5 bg-transparent focus:outline-none text-sm min-h-[40px] placeholder:text-muted-foreground/60"
                 disabled={isLoading}
               />
@@ -755,7 +755,7 @@ export default function Home() {
 
             {/* Footer Text */}
             <p className="text-xs text-muted-foreground text-center mt-3">
-              Gwen can make mistakes. Please verify important information.
+              Ken.ai can make mistakes. Please verify important information.
             </p>
           </form>
         </footer>

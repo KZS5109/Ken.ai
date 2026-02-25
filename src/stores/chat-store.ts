@@ -155,7 +155,7 @@ export const useChatStore = create<ChatState>()(
       },
     }),
     {
-      name: 'gwen-chat',
+      name: 'ken-ai-chat',
     }
   )
 );
