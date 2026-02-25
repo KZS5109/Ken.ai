@@ -1,29 +1,27 @@
-# Gwen - Developer Cockpit
+# Ken.ai - Developer Cockpit
 
-**Gwen** (GUI + Qwen) is a modern AI-powered developer cockpit built with Next.js, designed to be deployed on Vercel. It features a clean, responsive UI with shadcn/ui components, light/dark mode support, integrates with OpenRouter for Qwen AI access, and n8n for workflow automation.
+**Ken.ai** is a modern AI-powered developer cockpit built with Next.js, designed to be deployed on Vercel. It features a clean, responsive UI with shadcn/ui components, light/dark mode support, and n8n for workflow automation.
 
-![Gwen Developer Cockpit](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)
+![Ken.ai Developer Cockpit](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)
 ![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-latest-black?logo=shadcn&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel&logoColor=white)
-![OpenRouter](https://img.shields.io/badge/Provider-OpenRouter-black?logo=openai&logoColor=white)
 
 ## ✨ Features
 
 - 🌐 **Browser-based** - Works on desktop and mobile browsers
 - 🌓 **Light/Dark Mode** - Seamless theme switching
-- 💬 **Streaming Responses** - Real-time token streaming from Qwen AI via OpenRouter
+- 💬 **Streaming Responses** - Real-time token streaming from AI
 - 🔧 **Tool Mode** - Toggle n8n workflow integration on/off
 - 📊 **System Status Panel** - Real-time n8n connectivity and MCP tool schemas
 - 🎨 **Modern UI** - Built with shadcn/ui and Tailwind CSS
 - ⚙️ **Configurable** - n8n endpoint and API key stored server-side
 - 🚀 **Vercel Ready** - Deploy with zero configuration
-- 🔑 **OpenRouter** - Access Qwen models without phone verification
 
 ## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                   Gwen Developer Cockpit                     │
+│                   Ken.ai Developer Cockpit                   │
 │  ┌─────────────────────────────────────────────────────┐    │
 │  │  Main Chat Area                                      │    │
 │  │  - Markdown + Code Highlighting                      │    │
@@ -43,23 +41,23 @@
 │                    Vercel Serverless                         │
 │  ┌─────────────────────┐    ┌─────────────────────────┐    │
 │  │  POST /api/chat     │    │  GET /api/n8n/status    │    │
-│  │  - Qwen OAuth       │    │  - Check connection     │    │
-│  │  - Stream responses │    │  - Fetch tools          │    │
-│  │  - Tool interception│    │  - Return schemas       │    │
+│  │  - Stream responses │    │  - Check connection     │    │
+│  │  - Tool interception│    │  - Fetch tools          │    │
+│  │                     │    │  - Return schemas       │    │
 │  └─────────────────────┘    └─────────────────────────┘    │
 └─────────────────────────────────────────────────────────────┘
             │                                    │
             ▼                                    ▼
     ┌───────────────┐                    ┌───────────────┐
-    │  Qwen API     │                    │  n8n Webhook  │
-    │  (qwen-code)  │                    │  (HF Space)   │
+    │  AI Provider  │                    │  n8n Webhook  │
+    │               │                    │  (HF Space)   │
     └───────────────┘                    └───────────────┘
 ```
 
 ## 📁 Project Structure
 
 ```
-gwen/
+Ken.ai/
 ├── src/
 │   ├── app/
 │   │   ├── api/
@@ -112,7 +110,7 @@ gwen/
 
 1. **Navigate to the project:**
    ```bash
-   cd gwen
+   cd Ken.ai
    ```
 
 2. **Install dependencies:**
@@ -124,15 +122,11 @@ gwen/
    ```bash
    cp .env.example .env.local
    ```
-   
+
    Edit `.env.local` with your credentials:
    ```bash
-   # OpenRouter Configuration (Required)
-   OPENROUTER_API_KEY=sk-or-v1-your_api_key_here
-   # Get your key from https://openrouter.ai/keys
-
-   # Model Configuration
-   NEXT_PUBLIC_DEFAULT_MODEL=qwen/qwen-2.5-coder-32b
+   # AI Provider Configuration
+   AI_API_KEY=your_api_key_here
 
    # n8n Configuration (Optional)
    N8N_ENDPOINT=https://kzs5109-n8n.hf.space
@@ -161,7 +155,7 @@ gwen/
 
 When Tool Mode is enabled:
 
-1. Gwen detects tool-related keywords in your messages
+1. Ken.ai detects tool-related keywords in your messages
 2. Automatically intercepts and routes tool calls to n8n
 3. Displays tool execution status in the chat
 4. Shows tool results with JSON formatting
@@ -182,7 +176,7 @@ Settings are persisted in localStorage.
    ```bash
    git init
    git add .
-   git commit -m "Initial commit: Gwen Developer Cockpit"
+   git commit -m "Initial commit: Ken.ai Developer Cockpit"
    git remote add origin your-repo-url
    git push -u origin main
    ```
@@ -191,8 +185,7 @@ Settings are persisted in localStorage.
    - Go to [vercel.com](https://vercel.com)
    - Import your GitHub repository
    - Configure environment variables:
-     - `OPENROUTER_API_KEY` - Your OpenRouter API key (get from https://openrouter.ai)
-     - `NEXT_PUBLIC_DEFAULT_MODEL` - Model name (default: qwen/qwen-2.5-coder-32b)
+     - `AI_API_KEY` - Your AI provider API key
      - `N8N_ENDPOINT` - Your n8n instance URL (optional)
      - `N8N_API_KEY` - Your n8n API key (optional)
    - Click Deploy
@@ -204,24 +197,10 @@ Settings are persisted in localStorage.
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `OPENROUTER_API_KEY` | OpenRouter API key for Qwen access | ✅ Yes |
-| `NEXT_PUBLIC_DEFAULT_MODEL` | Model to use (e.g., `qwen/qwen-2.5-coder-32b`) | ❌ No (default set) |
+| `AI_API_KEY` | AI provider API key | ✅ Yes |
 | `N8N_ENDPOINT` | n8n instance URL | ❌ No |
 | `N8N_API_KEY` | n8n API key | ❌ No |
 | `N8N_MCP_TEST_ENDPOINT` | n8n MCP test workflow endpoint | ❌ No |
-
-### Getting OpenRouter API Key
-
-1. Go to https://openrouter.ai/keys
-2. Sign in or create an account
-3. Create a new API key
-4. Copy the key to `.env.local`
-
-**Benefits of OpenRouter:**
-- No phone verification required
-- Access to multiple Qwen models
-- Pay-per-use pricing
-- Unified API for different providers
 
 ## 🛠️ Technologies
 
@@ -244,7 +223,7 @@ Handles chat messages with streaming support.
 **Request:**
 ```json
 {
-  "message": "Hello, Gwen!",
+  "message": "Hello, Ken.ai!",
   "toolMode": false
 }
 ```
@@ -289,6 +268,4 @@ MIT
 
 ## 🙏 Acknowledgments
 
-- Built with inspiration from [@qwen-code/qwen-code](https://www.npmjs.com/package/@qwen-code/qwen-code)
 - UI components from [shadcn/ui](https://ui.shadcn.com)
-- Powered by Qwen AI models
