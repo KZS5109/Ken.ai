@@ -10,7 +10,7 @@
 
 - 🌐 **Browser-based** - Works on desktop and mobile browsers
 - 🌓 **Light/Dark Mode** - Seamless theme switching
-- 💬 **Streaming Responses** - Real-time token streaming from AI
+- 💬 **Streaming Responses** - Real-time token streaming from AI via n8n
 - 🔧 **Tool Mode** - Toggle n8n workflow integration on/off
 - 📊 **System Status Panel** - Real-time n8n connectivity and MCP tool schemas
 - 🎨 **Modern UI** - Built with shadcn/ui and Tailwind CSS
@@ -46,12 +46,12 @@
 │  │                     │    │  - Return schemas       │    │
 │  └─────────────────────┘    └─────────────────────────┘    │
 └─────────────────────────────────────────────────────────────┘
-            │                                    │
-            ▼                                    ▼
-    ┌───────────────┐                    ┌───────────────┐
-    │  AI Provider  │                    │  n8n Webhook  │
-    │               │                    │  (HF Space)   │
-    └───────────────┘                    └───────────────┘
+                              │
+                              ▼
+                    ┌───────────────────┐
+                    │  n8n Webhook      │
+                    │  (HF Space)       │
+                    └───────────────────┘
 ```
 
 ## 📁 Project Structure
@@ -125,10 +125,7 @@ Ken.ai/
 
    Edit `.env.local` with your credentials:
    ```bash
-   # AI Provider Configuration
-   AI_API_KEY=your_api_key_here
-
-   # n8n Configuration (Optional)
+   # n8n Configuration
    N8N_ENDPOINT=https://kzs5109-n8n.hf.space
    N8N_API_KEY=your_n8n_api_key
    N8N_MCP_TEST_ENDPOINT=https://kzs5109-n8n.hf.space/mcp-test/your-workflow-id
@@ -185,9 +182,9 @@ Settings are persisted in localStorage.
    - Go to [vercel.com](https://vercel.com)
    - Import your GitHub repository
    - Configure environment variables:
-     - `AI_API_KEY` - Your AI provider API key
-     - `N8N_ENDPOINT` - Your n8n instance URL (optional)
-     - `N8N_API_KEY` - Your n8n API key (optional)
+     - `N8N_ENDPOINT` - Your n8n instance URL
+     - `N8N_API_KEY` - Your n8n API key
+     - `N8N_MCP_TEST_ENDPOINT` - Your n8n MCP test workflow endpoint
    - Click Deploy
 
 3. **Production URL:**
@@ -197,8 +194,7 @@ Settings are persisted in localStorage.
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `AI_API_KEY` | AI provider API key | ✅ Yes |
-| `N8N_ENDPOINT` | n8n instance URL | ❌ No |
+| `N8N_ENDPOINT` | n8n instance URL | ✅ Yes |
 | `N8N_API_KEY` | n8n API key | ❌ No |
 | `N8N_MCP_TEST_ENDPOINT` | n8n MCP test workflow endpoint | ❌ No |
 
