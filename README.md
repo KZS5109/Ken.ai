@@ -196,7 +196,7 @@ Settings are persisted in localStorage.
 |----------|-------------|----------|
 | `N8N_ENDPOINT` | n8n instance URL | ✅ Yes |
 | `N8N_API_KEY` | n8n API key | ❌ No |
-| `N8N_MCP_TEST_ENDPOINT` | n8n MCP test workflow endpoint | ❌ No |
+| `N8N_MCP_TEST_ENDPOINT` | n8n webhook URL for chat | ✅ Yes |
 
 ## 🛠️ Technologies
 

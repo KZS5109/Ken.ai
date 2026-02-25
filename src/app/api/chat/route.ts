@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 
-const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL || 'https://kzs5109-n8n.hf.space/webhook/1f5cd19b-f72e-49f0-a00f-519a0bd76751';
+const N8N_WEBHOOK_URL = process.env.N8N_MCP_TEST_ENDPOINT || 'https://kzs5109-n8n.hf.space/webhook/1f5cd19b-f72e-49f0-a00f-519a0bd76751';
 
 export async function POST(request: NextRequest) {
   try {
