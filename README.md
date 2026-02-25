@@ -1,8 +1,8 @@
-# Ken.ai - Developer Cockpit
+# Karma.Ai - Developer Cockpit
 
-**Ken.ai** is a modern AI-powered developer cockpit built with Next.js, designed to be deployed on Vercel. It features a clean, responsive UI with shadcn/ui components, light/dark mode support, and n8n for workflow automation.
+**Karma.Ai** is a modern AI-powered developer cockpit built with Next.js, designed to be deployed on Vercel. It features a clean, responsive UI with shadcn/ui components, light/dark mode support, and n8n for workflow automation.
 
-![Ken.ai Developer Cockpit](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)
+![Karma.Ai Developer Cockpit](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)
 ![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-latest-black?logo=shadcn&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel&logoColor=white)
 
@@ -21,7 +21,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                   Ken.ai Developer Cockpit                   │
+│                   Karma.Ai Developer Cockpit                 │
 │  ┌─────────────────────────────────────────────────────┐    │
 │  │  Main Chat Area                                      │    │
 │  │  - Markdown + Code Highlighting                      │    │
@@ -57,7 +57,7 @@
 ## 📁 Project Structure
 
 ```
-Ken.ai/
+Karma.Ai/
 ├── src/
 │   ├── app/
 │   │   ├── api/
@@ -110,7 +110,7 @@ Ken.ai/
 
 1. **Navigate to the project:**
    ```bash
-   cd Ken.ai
+   cd Karma.Ai
    ```
 
 2. **Install dependencies:**
@@ -152,7 +152,7 @@ Ken.ai/
 
 When Tool Mode is enabled:
 
-1. Ken.ai detects tool-related keywords in your messages
+1. Karma.Ai detects tool-related keywords in your messages
 2. Automatically intercepts and routes tool calls to n8n
 3. Displays tool execution status in the chat
 4. Shows tool results with JSON formatting
@@ -173,7 +173,7 @@ Settings are persisted in localStorage.
    ```bash
    git init
    git add .
-   git commit -m "Initial commit: Ken.ai Developer Cockpit"
+   git commit -m "Initial commit: Karma.Ai Developer Cockpit"
    git remote add origin your-repo-url
    git push -u origin main
    ```
@@ -219,7 +219,7 @@ Handles chat messages with streaming support.
 **Request:**
 ```json
 {
-  "message": "Hello, Ken.ai!",
+  "message": "Hello, Karma.Ai!",
   "toolMode": false
 }
 ```

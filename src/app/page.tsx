@@ -66,7 +66,7 @@ function ChatMessageItem({ message, onAttachmentClick }: { message: Message; onA
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <span className="font-semibold text-sm">
-            {isUser ? 'You' : 'Ken.ai'}
+            {isUser ? 'You' : 'Karma.Ai'}
           </span>
           <span className="text-xs text-muted-foreground">
             {new Date(message.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -605,7 +605,7 @@ export default function Home() {
               {showSidebar ? <X size={18} /> : <Menu size={18} />}
             </Button>
             <div>
-              <h1 className="font-semibold text-lg">Ken.ai</h1>
+              <h1 className="font-semibold text-lg">Karma.Ai</h1>
               <p className="text-xs text-muted-foreground">AI Assistant</p>
             </div>
           </div>
@@ -668,7 +668,7 @@ export default function Home() {
                         <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:-0.15s]"></span>
                         <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></span>
                       </div>
-                      <span className="text-muted-foreground text-sm">Ken.ai is thinking...</span>
+                      <span className="text-muted-foreground text-sm">Karma.Ai is thinking...</span>
                     </div>
                   </motion.div>
                 )}
@@ -755,7 +755,7 @@ export default function Home() {
 
             {/* Footer Text */}
             <p className="text-xs text-muted-foreground text-center mt-3">
-              Ken.ai can make mistakes. Please verify important information.
+              Karma.Ai can make mistakes. Please verify important information.
             </p>
           </form>
         </footer>

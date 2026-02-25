@@ -35,7 +35,7 @@ export default function SettingsPage() {
               <div>
                 <h1 className="text-3xl font-bold">Settings</h1>
                 <p className="text-muted-foreground mt-1">
-                  Configure your Ken.ai instance
+                  Configure your Karma.Ai instance
                 </p>
               </div>
               <Button
@@ -52,7 +52,7 @@ export default function SettingsPage() {
               <CardHeader>
                 <CardTitle>Appearance</CardTitle>
                 <CardDescription>
-                  Customize how Ken.ai looks on your device
+                  Customize how Karma.Ai looks on your device
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -85,11 +85,11 @@ export default function SettingsPage() {
             {/* Info */}
             <Card>
               <CardHeader>
-                <CardTitle>About Ken.ai</CardTitle>
+                <CardTitle>About Karma.Ai</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
                 <p className="text-muted-foreground">
-                  Ken.ai is a browser-based AI chatbot that connects to n8n workflows.
+                  Karma.Ai is a browser-based AI chatbot that connects to n8n workflows.
                   It's designed to be deployed on Vercel as a serverless application.
                 </p>
                 <div className="grid grid-cols-2 gap-4">
